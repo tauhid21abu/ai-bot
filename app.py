@@ -12,7 +12,7 @@ st.write(
 )
 
 # আপনার এপিআই কি এখানে বসান
-API_KEY = "আপনার_এপিআই_কি_এখানে_দিন"
+API_KEY = "AQ.Ab8RN6KYdRgeaKjSGwE9-ndFurMX9KSrbr467uzmkI8NxM1VgQ"
 
 if API_KEY == "আপনার_এপিআই_কি_এখানে_দিন":
     st.warning("AQ.Ab8RN6KYdRgeaKjSGwE9-ndFurMX9KSrbr467uzmkI8NxM1VgQ")
