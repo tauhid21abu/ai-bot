@@ -1,39 +1,36 @@
-import urllib.request
-import json
+import google.generativeai as genai
+import streamlit as st
 
-# আপনার কপি করা এপিআই কি এখানে বসান
-API_KEY = "AQ.Ab8RN6KYdRgeaKjSGwE9-ndFurMX9KSrbr467uzmkI8NxM1VgQ"
-URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={API_KEY}"
+# পৃষ্ঠার টাইটেল
+st.set_page_config(
+    page_title="Mobile Deep Research Bot", page_icon="🤖", layout="centered"
+)
 
-# বটের সিস্টেম ইনস্ট্রাকশন বা চরিত্র
-system_prompt = """
-তুমি একজন বিশ্বমানের গবেষক এবং শিক্ষক। 
-ব্যবহারকারী যখনই কোনো কঠিন বিষয় বা কনসেপ্ট জানতে চাইবে, তখন গতানুগতিক উত্তর না দিয়ে সেটিকে বাস্তব জীবনের সহজ উদাহরণ দিয়ে পানির মতো সহজ করে বুঝিয়ে দেবে। 
-গভীরে গিয়ে (Deep Research/Dive) ওই বিষয়ের মূল লজিক, 'কেন' এবং 'কীভাবে' কাজ করে তা ধাপে ধাপে ব্যাখ্যা করবে। উত্তরগুলো সবসময় সুন্দর হেডিং এবং বুলেট পয়েন্টে লিখবে।
-"""
+st.title("🤖 আমার মোবাইল ডিপ রিসার্চ বট")
+st.write(
+    "এখানে আপনার প্রশ্ন লিখুন, এআই ডিপ রিসার্চ করে উত্তর দেওয়া শুরু করবে।"
+)
 
-print("--- আপনার মোবাইল ডিপ রিসার্চ বট তৈরি! ---")
+# আপনার এপিআই কি এখানে বসান
+API_KEY = "আপনার_এপিআই_কি_এখানে_দিন"
 
-# চ্যাট লুপ
-while True:
-    user_input = input("\nআপনি (প্রশ্ন লিখুন): ")
-    if user_input.lower() == 'exit':
-        break
-    
-    # এপিআই-এর জন্য ডেটা প্রস্তুত করা
-    payload = {
-        "contents": [
-            {"role": "user", "parts": [{"text": system_prompt + "\n\nব্যবহারকারীর প্রশ্ন: " + user_input}]}
-        ]
-    }
-    
-    data = json.dumps(payload).encode('utf-8')
-    req = urllib.request.Request(URL, data=data, headers={'Content-Type': 'application/json'})
-    
-    try:
-        with urllib.request.urlopen(req) as response:
-            res_data = json.loads(response.read().decode('utf-8'))
-            answer = res_data['candidates'][0]['content']['parts'][0]['text']
-            print(f"\nবট:\n{answer}")
-    except Exception as e:
-        print(f"\nত্রুটি দেখা দিয়েছে: {e}")
+if API_KEY == "আপনার_এপিআই_কি_এখানে_দিন":
+    st.warning("AQ.Ab8RN6KYdRgeaKjSGwE9-ndFurMX9KSrbr467uzmkI8NxM1VgQ")
+else:
+    genai.configure(api_key=API_KEY)
+    model = genai.GenerativeModel("gemini-1.5-pro-latest")
+
+    # চ্যাট ইনপুট বক্স
+    user_prompt = st.text_area("আপনার গবেষণার বিষয়টি এখানে লিখুন:")
+
+    if st.button("রিসার্চ শুরু করুন"):
+        if user_prompt:
+            with st.spinner("ডিপ রিসার্চ চলছে, একটু অপেক্ষা করুন..."):
+                try:
+                    response = model.generate_content(user_prompt)
+                    st.subheader("ফলাফল:")
+                    st.write(response.text)
+                except Exception as e:
+                    st.error(f"একটি সমস্যা হয়েছে: {e}")
+        else:
+            st.warning("আগে কিছু একটা লিখুন!")
